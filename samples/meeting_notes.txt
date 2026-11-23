@@ -1,0 +1,9 @@
+Product sync — 12 March
+Attendees: Amina, Ben, Chen
+We discussed the Q3 roadmap and the delayed payments integration.
+Decision: ship the CSV importer before the API integration.
+Amina will draft the migration guide by Friday.
+Ben to follow up with the payments vendor about sandbox access.
+Action: Chen to add regression tests for the importer.
+Open question: do we need a data-retention policy before launch?
+Blocker: legal review is still pending.

@@ -1,35 +1,39 @@
+"""Summarise raw meeting notes into structured decisions, actions, and questions.
+
+Usage:
+    python meeting_notes.py --file notes.txt
+    python meeting_notes.py --text "We agreed to ship on Friday..."
+    python meeting_notes.py --file notes.txt --offline
 """
-meeting_notes.py - Summarise raw meeting notes into structured action items.
-Usage: python meeting_notes.py --file notes.txt
-"""
-import argparse, os
-import anthropic
 
-client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+from __future__ import annotations
 
-SYSTEM = """You are an expert meeting facilitator. Given raw meeting notes:
-1. Write a 2-sentence summary of what was discussed
-2. List all decisions made (as bullets)
-3. List all action items with owner and deadline if mentioned
-4. List any open questions or blockers
-Be concise. Use bullet points. Never invent information not in the notes."""
+import argparse
+from pathlib import Path
 
-def summarise(text: str) -> str:
-    msg = client.messages.create(
-        model="claude-sonnet-4-20250514",
-        max_tokens=1024,
-        system=SYSTEM,
-        messages=[{"role": "user", "content": f"Meeting notes:\n\n{text}"}],
-    )
-    return msg.content[0].text
+from common import llm_available
+from logic import summarise_meeting
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--file", help="Path to a text file with meeting notes")
+    source.add_argument("--text", help="Meeting notes as a single argument")
+    parser.add_argument("--offline", action="store_true", help="Force the deterministic fallback")
+    parser.add_argument("--model", help="Override the provider model")
+    args = parser.parse_args(argv)
+
+    try:
+        content = Path(args.file).read_text() if args.file else args.text
+    except OSError as exc:
+        parser.error(str(exc))
+        return 2
+
+    use_llm = not args.offline and llm_available()
+    print(summarise_meeting(content, use_llm=use_llm, model=args.model))
+    return 0
+
 
 if __name__ == "__main__":
-    p = argparse.ArgumentParser()
-    g = p.add_mutually_exclusive_group(required=True)
-    g.add_argument("--file")
-    g.add_argument("--text")
-    args = p.parse_args()
-    content = open(args.file).read() if args.file else args.text
-    print("\n" + "="*60)
-    print(summarise(content))
-    print("="*60)
+    raise SystemExit(main())
