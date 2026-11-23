@@ -5,6 +5,16 @@ Three focused AI productivity tools in one repository: meeting-note summarisatio
 ![Status](https://img.shields.io/badge/status-complete-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
+## Portfolio Status
+
+**✅ Built** — this repository is the working implementation for the
+[Meeting Intelligence Platform](https://github.com/malikatemz/reimagined-octo-eureka/blob/main/ideas/productivity/meeting-intelligence-platform.md)
+opportunity in the [AI SaaS Portfolio](https://github.com/malikatemz/reimagined-octo-eureka).
+
+**Verification (23 Nov 2026):** 8 tests pass; meeting-notes summarisation, action-item extraction, task prioritisation, and time-blocked daily planning are implemented.
+
+---
+
 ## Tools
 
 | Tool | What it does |
